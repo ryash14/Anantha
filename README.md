@@ -4,7 +4,23 @@ Anantha answers ocean-data questions by combining natural-language routing, sema
 
 Oceanographic records often require both conceptual discovery and exact filtering. Anantha uses vector retrieval to identify relevant float records when a question is semantic, then retrieves structured observations through SQL. The response layer can produce text, tables and plot data from those results.
 
-[Quick start](#quick-start) · [How it works](#how-it-works) · [Development](#development) · [Contributing](CONTRIBUTING.md)
+[Preview](#application-preview) · [Quick start](#quick-start) · [Architecture](#architecture-and-request-flow) · [Development](#development) · [Contributing](CONTRIBUTING.md)
+
+## Application preview
+
+![Anantha ocean-data conversation client](docs/screenshots/ocean-data-client.png)
+
+Archived client view showing session navigation, response modes and the ocean-data query composer.
+
+[Screenshot notes](docs/screenshots/README.md)
+
+## Capabilities
+
+| Workflow | Result |
+|---|---|
+| Interpret a question | Classify the request into structured or semantic retrieval. |
+| Retrieve observations | Use Chroma candidate identifiers to constrain PostgreSQL access. |
+| Present the result | Return a narrative, table or plot-oriented response from the retrieved data. |
 
 ## Quick start
 
@@ -39,14 +55,14 @@ Before testing `/query`, inspect these integration points:
 
 Use a database role restricted to the intended reads. A successful LLM response is not sufficient evidence that a generated SQL statement is safe or that its oceanographic interpretation is correct.
 
-## How it works
+## Architecture and request flow
 
 1. Submit a question and response mode to the FastAPI `/query` endpoint.
 2. Query enhancement and classification choose a direct SQL path or a vector-assisted path.
 3. Semantic retrieval applies metadata filters and supplies float IDs to SQL generation.
 4. PostgreSQL results are converted into the requested answer or data presentation.
 
-### Component boundaries
+### Component model
 
 ```mermaid
 flowchart TB
@@ -60,7 +76,7 @@ flowchart TB
     Answer --> API["FastAPI response"]
 ```
 
-### Design decisions
+### Engineering decisions
 
 The orchestrator is ordinary Python routing rather than a LangGraph state machine. Chroma holds semantic document records; PostgreSQL holds structured measurements. Gemini provides embedding and generation calls in the inspected modules.
 
