@@ -1,93 +1,57 @@
 # Anantha
 
-Most oceanographic data is locked behind NetCDF files, specialized tooling, and domain expertise. Anantha removes that barrier — researchers and analysts can query 23 years of ARGO float data in plain language and get back visualizations, forecasts, and anomaly reports.
+> `Natural-language ocean-data queries routed through semantic retrieval and PostgreSQL.`
 
-Built for Smart India Hackathon 2025. Live at [anantha.live](https://anantha.live).
+### 🏗️ System Architecture
 
----
-
-## What It Does
-
-You type a question. Anantha figures out whether it needs SQL, vector search, or LLM reasoning — or all three — and returns structured, traceable results. No query language required.
-
-The system handles:
-- **Natural language to structured queries** — intent extraction, constraint parsing, schema-aware SQL generation
-- **Hybrid retrieval** — semantic vector search (ChromaDB) combined with PostgreSQL for precise data access
-- **Predictive modeling** — LSTM and transformer-based forecasting, anomaly detection, and trend analysis
-- **Multimodal input** — documents, images, unstructured `.nc` files processed in a unified interface
-- **Interactive output** — 2D/3D visualizations, float trajectory maps, depth-time plots, BGC comparisons
-
----
-
-## Architecture
-
-```
-User Query
-    │
-    ▼
-FastAPI + Redis (session & queue)
-    │
-    ▼
-LLM Query Parser (intent, constraints, structure)
-    │
-    ├── SQL path → PostgreSQL (structured float data)
-    ├── Vector path → ChromaDB (semantic retrieval)
-    └── LLM path → Knowledge base reasoning
-    │
-    ▼
-LSTM / Transformer (forecasting & anomaly detection)
-    │
-    ▼
-LLM-orchestrated output → visualizations + tabular API
-    │
-    ▼
-Reinforcement feedback loop (adaptive refinement)
+```mermaid
+%%{init: {'theme': 'dark'}}%%
+flowchart TD
+    N0["Ocean data question"]
+    N1["Query enhancement and classification"]
+    N2["SQL or semantic retrieval route"]
+    N3["Chroma metadata filters and float IDs"]
+    N4["Generated SQL and PostgreSQL retrieval"]
+    N5["Structured answer synthesis"]
+    N6["Tables plots and text response"]
+    N0 --> N1
+    N1 --> N2
+    N2 --> N3
+    N3 --> N4
+    N4 --> N5
+    N5 --> N6
 ```
 
----
+### 🛠️ Production Stack
 
-## Stack
+Python · FastAPI · ChromaDB · PostgreSQL · provider LLM calls · pandas · React · Vite
 
-**Backend** · FastAPI · PostgreSQL · Redis  
-**AI & Retrieval** · ChromaDB · LangChain · RAG · LSTM · Transformers  
-**Data** · xarray · NetCDF · ARGO Float datasets (2002–2025, 50GB+)  
-**Visualization** · Plotly · Leaflet  
-**Deployment** · Google Cloud · Firebase
+### ⚡ Key Engineering Capabilities
 
----
+- Intent classification selects structured or semantic retrieval paths.
+- Vector results constrain downstream structured data queries.
+- Response handling supports narrative, tabular and plot-oriented output.
 
-## Getting Started
+### 🚀 Deployment and Local Setup
+
+Run from the repository root after cloning:
 
 ```bash
 git clone https://github.com/ryash14/Anantha.git
 cd Anantha
-pip install -r requirements.txt
+python3 -m venv .venv
+source .venv/bin/activate
+python -m pip install -r backend/requirements.txt
+cd backend
+python -m uvicorn main:app --host 127.0.0.1 --port 8000
+# In another terminal at the repository root: npm install && npm run dev
 ```
 
-Configure your environment:
+Configure PostgreSQL, source data, Chroma indexes and provider credentials before querying. Inspect the backend database and embedding modules for expected local paths and configuration. The code routes through Python functions; LangGraph and LSTM deployment are not asserted here. Generated SQL requires a restricted database role and validation before exposure to untrusted users.
 
-```env
-DATABASE_URL=your_postgresql_url
-CHROMA_PATH=./chroma_db
-GOOGLE_API_KEY=your_google_api_key
-REDIS_URL=your_redis_url
-```
+### Source Map
 
-Run the server:
-
-```bash
-uvicorn main:app --reload
-```
-
----
-
-## Data
-
-Anantha ingests ARGO float data in NetCDF format via `xarray`, processes it into PostgreSQL and ChromaDB, and keeps it current through automated ETL jobs. Historical data beyond the active window is archived in cold storage with summary indices maintained for fast retrieval.
-
----
-
-## Developed at
-
-Smart India Hackathon 2025 · Problem Statement 25040  
-Team Sirius (ID: 99896)
+- [backend/main.py](backend/main.py)
+- [backend/main_pipeline.py](backend/main_pipeline.py)
+- [backend/store_in_vector_db/vector_db.py](backend/store_in_vector_db/vector_db.py)
+- [backend/retrieve_data_from_db/postgres_db.py](backend/retrieve_data_from_db/postgres_db.py)
