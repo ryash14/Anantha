@@ -7,19 +7,17 @@
 ```mermaid
 %%{init: {'theme': 'dark'}}%%
 flowchart TD
-    N0["Ocean data question"]
-    N1["Query enhancement and classification"]
-    N2["SQL or semantic retrieval route"]
-    N3["Chroma metadata filters and float IDs"]
-    N4["Generated SQL and PostgreSQL retrieval"]
-    N5["Structured answer synthesis"]
-    N6["Tables plots and text response"]
-    N0 --> N1
-    N1 --> N2
-    N2 --> N3
-    N3 --> N4
-    N4 --> N5
-    N5 --> N6
+    Q["Oceanographic question"] --> EN["Query enhancement and intent classification"]
+    EN -->|structured| SQL["Schema-aware SQL generation"]
+    EN -->|semantic| FILTER["Metadata filters"]
+    FILTER --> V["Chroma vector retrieval"]
+    V --> IDS["Candidate float identifiers"] --> SQL
+    SQL --> PG["PostgreSQL data retrieval"]
+    PG --> LLM["Answer synthesis with query context"]
+    PG --> CSV["CSV and plot data preparation"]
+    LLM --> OUT["FastAPI text table or plot response"]
+    CSV --> OUT
+    OUT --> UI["React ocean-data interface"]
 ```
 
 ### 🛠️ Production Stack
